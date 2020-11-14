@@ -1,5 +1,62 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
+
+@model User
 @{
+    ViewBag.Title = "EList |Sign Up";
+    ViewBag.UserPage = "active";
+    Layout = "_Layout";
 }
+
+<div class=" container col-10 center" style="display:flex;flex-direction:row;justify-content:center;align-items:center; margin:0">
+    <div class="col-6 container-style-left ">
+        <img src="~/images/bgmain.png" class="col-12 img-style" />
+    </div>
+    <div class="col-6 container-style center">
+        <div class="col-10 top-div center">
+            <a class="col-6 txt-signin" asp-controller="Account" asp-action="Signin" role="button">Sign in</a>
+            <a class="col-6 txt-signup" asp-controller="Account" asp-action="Signup" role="button">Sign up</a>
+        </div>
+        <div class="text-danger justify-content-center" asp-validation-summary="All"></div>
+        <div class="col-12">
+            <form asp-action="Signup" asp-controller="Users" method="post" class="class-12 justify-content-center" style="padding:10px">
+                <div class=" col-12 form-group input-div">
+                    <input asp-for="Email" class="form-control col-10 input-style" placeholder="e.g. example@email.com" style="border-radius:20px" required />
+                </div>
+                <div class=" col-12 form-group input-div">
+                    <input asp-for="FirstName" class="form-control col-10 input-style" placeholder="e.g. John" style="border-radius:20px" required />
+                </div>
+                <div class=" col-12 form-group input-div">
+                    <input asp-for="LastName" class="form-control col-10 input-style" placeholder="e.g. Doe" style="border-radius:20px" required />
+                </div>
+                <div class=" col-12 form-group input-div">
+                    <input asp-for="Phone" id="phone" class="form-control col-10 input-style" placeholder="e.g. (416) 111- 1111" style="border-radius:20px" required />
+                </div>
+                <div class="col-12 form-group input-div">
+                    <input asp-for="Password" class="form-control col-10 input-style" placeholder="********" required />
+                </div>
+                <div class="col-12 form-group input-div">
+                    <input asp-for="ConfirmPassword" class="form-control col-10 input-style" placeholder="********" required />
+                </div>
+                <div class="btn-div col-12">
+                    <button class="col-8 btn btn-danger btn-signin btn-style" type="submit">Sign Up</button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    setTimeout(function () {
+        $('#error').fadeOut('slow');
+    }, 3000);
+</script>
+<script src="https://raw.githubusercontent.com/igorescobar/jQuery-Mask-Plugin/master/src/jquery.mask.js"></script>
+<script>
+    $(document).ready(function ($) {
+        $("#phone").mask("(999) 999-9999");
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+

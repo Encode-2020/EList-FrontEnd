@@ -50,7 +50,7 @@ namespace EList_Frontend
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Account}/{action=Signin}/{id?}");
             });
         }
     }
