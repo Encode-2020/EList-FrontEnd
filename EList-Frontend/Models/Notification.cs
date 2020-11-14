@@ -11,7 +11,5 @@ namespace EList_Frontend.Models
         public DateTime Datetime { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-
-
     }
 }
