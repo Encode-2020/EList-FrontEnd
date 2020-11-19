@@ -2,7 +2,7 @@
 
 @model User
 @{
-    ViewBag.Title = "EList |Sign Up";
+    ViewBag.Title = "EList | Sign Up";
     ViewBag.UserPage = "active";
     Layout = "_Layout";
 }
@@ -28,15 +28,15 @@
                 <div class=" col-12 form-group input-div">
                     <input asp-for="LastName" class="form-control col-10 input-style" placeholder="e.g. Doe" style="border-radius:20px" required />
                 </div>
-                <div class=" col-12 form-group input-div">
+                @*<div class=" col-12 form-group input-div">
                     <input asp-for="Phone" id="phone" class="form-control col-10 input-style" placeholder="e.g. (416) 111- 1111" style="border-radius:20px" required />
-                </div>
+                </div>*@
                 <div class="col-12 form-group input-div">
                     <input asp-for="Password" class="form-control col-10 input-style" placeholder="********" required />
                 </div>
-                <div class="col-12 form-group input-div">
+                @*<div class="col-12 form-group input-div">
                     <input asp-for="ConfirmPassword" class="form-control col-10 input-style" placeholder="********" required />
-                </div>
+                </div>*@
                 <div class="btn-div col-12">
                     <button class="col-8 btn btn-danger btn-signin btn-style" type="submit">Sign Up</button>
                 </div>
