@@ -10,7 +10,6 @@ namespace EList_Frontend.Models
         public int ListId { get; set; }
         public int UserId { get; set; }
         public string ListName { get; set; }
-        public string ListLabel { get; set; }
         public string ListColor { get; set; }
         public ICollection<Item> Items { get; set; }
     }

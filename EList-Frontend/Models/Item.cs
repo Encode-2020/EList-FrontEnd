@@ -9,9 +9,7 @@ namespace EList_Frontend.Models
     {
         public string ItemId { get; set; }
         public string ListId { get; set; }
-        public string Title { get; set; }
         public string Description { get; set; }
-        public DateTime FinalDate { get; set; }
-        public ICollection<Notification> Notifications { get; set; }
+        public DateTime ReminderDateTime { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 @model User
 @{
-    ViewBag.Title = "EList |Sign Up";
+    ViewBag.Title = "EList | Sign in";
     ViewBag.UserPage = "active";
     Layout = "_Layout";
 }
@@ -18,7 +18,7 @@
         </div>
         <div class="text-danger justify-content-center" asp-validation-summary="All"></div>
         <div class="col-12">
-            <form asp-action="Signup" asp-controller="Users" method="post" class="class-12 justify-content-center" style="padding:10px">
+            <form asp-action="Signin" asp-controller="Account" method="post" class="class-12 justify-content-center" style="padding:10px">
                 <div class=" col-12 form-group input-div">
                     <input asp-for="Email" class="form-control col-10 input-style" placeholder="e.g. example@email.com" style="border-radius:20px" required />
                 </div>
@@ -27,7 +27,7 @@
                 </div>
               
                 <div class="btn-div col-12">
-                    <button class="col-8 btn btn-danger btn-signin btn-style" type="submit">Sign Up</button>
+                    <button class="col-8 btn btn-danger btn-signin btn-style" type="submit">Sign in</button>
                 </div>
             </form>
 
