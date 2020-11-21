@@ -95,16 +95,25 @@
                     
                 </div>
                 <div class="cardParent">
-                    <div class="card mb-4 shadow-sm cardSingle">
-                        <div class="card-header bg-danger" style="width:3rem; height:15rem">
-                            <h3 style="position:absolute; left:60px; top:6rem">English</h3>
+                    @foreach (var m in Model)
+                    {
+                        <div class="card mb-4 shadow-sm cardSingle">
+                            <a asp-controller="Home" asp-action="DeleteList" asp-route-id="@m.ListId" style="color:red">X</a>
+                            <a asp-controller="Home" asp-action="GotoList" asp-route-id="@m.ListId" style="display:inline">
+                                <div class="card-header @m.ListColor" style="width:3rem; height:15rem">
+                                    @if (m.ListName == null)
+                                    {
+                                        <h3 style="position:absolute; left:60px; top:6rem; color:black">No name</h3>
+                                    }
+                                    else
+                                    {
+                                        <h3 style="position:absolute; left:60px; top:6rem; color:black">@m.ListName</h3>
+                                    }
+                                </div>
+                            </a>
                         </div>
-                    </div>
-                    <div class="card mb-4 shadow-sm cardSingle">
-                        <div class="card-header bg-info" style="width:3rem; height:15rem">
-                            <h3 style="position:absolute; left:60px; top:6rem">Science</h3>
-                        </div>
-                    </div>
+
+                    }
                 </div>
             </div>
         </div>
