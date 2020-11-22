@@ -41,7 +41,7 @@ namespace EList_Frontend.Controllers
         public async Task<IActionResult> Signin(User user)
         {
             HttpClient client = new HttpClient();
-            string url = baseUrl + "api/Users/"+1;
+            string url = baseUrl + "api/Users/";
             //if (ModelState.IsValid)
             //{
                 //
@@ -51,7 +51,7 @@ namespace EList_Frontend.Controllers
                     password = user.Password
                 });
                 var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
-                var response = await client.GetAsync(url);
+                var response = await client.PostAsync(url, content);
                 var userResponse = await response.Content.ReadAsStringAsync();
                 // LoginResponse responseObj = JsonConvert.DeserializeObject<LoginResponse>(userResponse);
                 if (response.IsSuccessStatusCode)
