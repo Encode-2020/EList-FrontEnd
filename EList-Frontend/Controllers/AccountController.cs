@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using EList_Frontend.Models;
+using EList_Frontend.Models.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,12 @@ namespace EList_Frontend.Controllers
         private IConfiguration? configuration;
         string? baseUrl;
         public string? token;
-        User sessionUser;
+        User loggedUser;
         public AccountController(IConfiguration config)
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
-            sessionUser = new User();
+            loggedUser = new User();
         }
 
 
@@ -38,35 +39,49 @@ namespace EList_Frontend.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Signin(User user)
+        public async Task<IActionResult> Signin(Login login)
         {
+            User fetchedUser = new User();
+            fetchedUser =await GetUser(login);
             HttpClient client = new HttpClient();
-            string url = baseUrl + "api/Users/";
-            //if (ModelState.IsValid)
-            //{
-                //
-                var jsonObj = JsonConvert.SerializeObject(new
-                {
-                    email = user.Email,
-                    password = user.Password
-                });
-                var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(url, content);
+            string url = baseUrl + "api/Users/"+fetchedUser.UserID;
+            if (ModelState.IsValid)
+            {
+                var response = await client.GetAsync(url);
                 var userResponse = await response.Content.ReadAsStringAsync();
                 // LoginResponse responseObj = JsonConvert.DeserializeObject<LoginResponse>(userResponse);
                 if (response.IsSuccessStatusCode)
                 {
-                    sessionUser = JsonConvert.DeserializeObject<User>(userResponse);
-                   // HttpContext.Session.SetString("UserId", sessionUser.UserID);
-                        return Redirect("/Home/Index");
+                    loggedUser = JsonConvert.DeserializeObject<User>(userResponse);
+                    HttpContext.Session.SetInt32("UserId", loggedUser.UserID);
+                    return Redirect("/Home/Index");
                 }
                 else
                 {
                     TempData["FailedToLogin"] = "Information is incorrect.";
                 }
 
-            //}
+            }
             return View();
+        }
+        public async Task<User> GetUser(Login login)
+        {
+            LoginResponse loginResponse = new LoginResponse();
+            HttpClient client = new HttpClient();
+            string url = baseUrl + "api/login/";
+            //
+            var jsonObj = JsonConvert.SerializeObject(new
+            {
+                email = login.Email,
+                password = login.Password
+            });
+            var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(url, content);
+            var userResponse = await response.Content.ReadAsStringAsync();
+            loginResponse = JsonConvert.DeserializeObject<LoginResponse>(userResponse);
+        
+            HttpContext.Session.SetString("Token", loginResponse.Token);
+            return loginResponse.User;
         }
 
         [AllowAnonymous]
