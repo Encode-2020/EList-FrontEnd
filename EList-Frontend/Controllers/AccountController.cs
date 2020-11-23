@@ -20,11 +20,13 @@ namespace EList_Frontend.Controllers
         string? baseUrl;
         public string? token;
         User loggedUser;
+        User createdUser;
         public AccountController(IConfiguration config)
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
             loggedUser = new User();
+            createdUser = new User();
         }
 
 
@@ -44,6 +46,7 @@ namespace EList_Frontend.Controllers
             User fetchedUser = new User();
             fetchedUser =await GetUser(login);
             HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
             string url = baseUrl + "api/Users/"+fetchedUser.UserID;
             if (ModelState.IsValid)
             {
@@ -54,7 +57,7 @@ namespace EList_Frontend.Controllers
                 {
                     loggedUser = JsonConvert.DeserializeObject<User>(userResponse);
                     HttpContext.Session.SetInt32("UserId", loggedUser.UserID);
-                    return Redirect("/Home/Index");
+                    return Redirect("/List/Index");
                 }
                 else
                 {
@@ -66,28 +69,61 @@ namespace EList_Frontend.Controllers
         }
         public async Task<User> GetUser(Login login)
         {
-            LoginResponse loginResponse = new LoginResponse();
-            HttpClient client = new HttpClient();
-            string url = baseUrl + "api/login/";
-            //
-            var jsonObj = JsonConvert.SerializeObject(new
-            {
-                email = login.Email,
-                password = login.Password
-            });
-            var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(url, content);
-            var userResponse = await response.Content.ReadAsStringAsync();
-            loginResponse = JsonConvert.DeserializeObject<LoginResponse>(userResponse);
-        
-            HttpContext.Session.SetString("Token", loginResponse.Token);
-            return loginResponse.User;
+            RootResponse responseObj = new RootResponse();
+             HttpClient client = new HttpClient();
+                string url = baseUrl + "api/login/";
+                //
+                var jsonObj = JsonConvert.SerializeObject(new
+                {
+                    email = login.Email,
+                    password = login.Password
+                });
+                var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(url, content);
+                var userResponse = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<RootResponse>(userResponse);
+
+                HttpContext.Session.SetString("Token", responseObj.LoginResponse.Token);
+                token = responseObj.LoginResponse.Token;
+            return responseObj.LoginResponse.User;
         }
 
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Signup()
         {
+            return View(new User());
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Signup(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpClient client = new HttpClient();
+                string url = baseUrl + "api/Users";
+                var jsonObj = JsonConvert.SerializeObject(new
+                {
+                    username = user.Username,
+                    email = user.Email,
+                    password = user.Password
+                });
+                var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(url, content);
+                    var userResponse = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                    createdUser = JsonConvert.DeserializeObject<User>(userResponse);
+                    HttpContext.Session.SetInt32("UserId", createdUser.UserID);
+                    TempData["SignupSuccess"] = "User created successfull!";
+                    return Redirect("/Account/Signin");
+                    }
+                    else
+                    {
+                        TempData["FailedToLogin"] = "Information is incorrect.";
+                    }
+            }
+           
             return View();
         }
 
