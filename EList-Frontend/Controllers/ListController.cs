@@ -44,7 +44,9 @@ namespace EList_Frontend.Controllers
                 listsOfUser = JsonConvert.DeserializeObject<List<List>>(userResponse);
                 Debug.WriteLine("Total number of lists: " + listsOfUser.Count());
                 List<List> sortedLists = new List<List>();
-                foreach (List list in sortedLists)
+                List<Item> sortedItems = new List<Item>();
+                ListItemModel listItemModel = new ListItemModel();
+                foreach (List list in listsOfUser)
                 {
                     if (list.UserId == userID)
                     {
@@ -53,12 +55,12 @@ namespace EList_Frontend.Controllers
                 }
                 if (sortedLists != null)
                 {
-                    return View(sortedLists);
+                    listItemModel.List = sortedLists;
+                    return View(listItemModel);
                 }
             }
             return View();
         }
-
         // GET: ListController/Details/5
         public ActionResult Details(int id)
         {
