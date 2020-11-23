@@ -18,25 +18,17 @@
         </div>
         <div class="text-danger justify-content-center" asp-validation-summary="All"></div>
         <div class="col-12">
-            <form asp-action="Signup" asp-controller="Users" method="post" class="class-12 justify-content-center" style="padding:10px">
+            <form asp-action="Signup" asp-controller="Account" method="post" class="class-12 justify-content-center" style="padding:10px">
                 <div class=" col-12 form-group input-div">
                     <input asp-for="Email" class="form-control col-10 input-style" placeholder="e.g. example@email.com" style="border-radius:20px" required />
                 </div>
                 <div class=" col-12 form-group input-div">
-                    <input asp-for="FirstName" class="form-control col-10 input-style" placeholder="e.g. John" style="border-radius:20px" required />
+                    <input asp-for="Username" class="form-control col-10 input-style" placeholder="e.g. John123" style="border-radius:20px" required />
                 </div>
-                <div class=" col-12 form-group input-div">
-                    <input asp-for="LastName" class="form-control col-10 input-style" placeholder="e.g. Doe" style="border-radius:20px" required />
-                </div>
-                @*<div class=" col-12 form-group input-div">
-                    <input asp-for="Phone" id="phone" class="form-control col-10 input-style" placeholder="e.g. (416) 111- 1111" style="border-radius:20px" required />
-                </div>*@
                 <div class="col-12 form-group input-div">
                     <input asp-for="Password" class="form-control col-10 input-style" placeholder="********" required />
                 </div>
-                @*<div class="col-12 form-group input-div">
-                    <input asp-for="ConfirmPassword" class="form-control col-10 input-style" placeholder="********" required />
-                </div>*@
+
                 <div class="btn-div col-12">
                     <button class="col-8 btn btn-danger btn-signin btn-style" type="submit">Sign Up</button>
                 </div>
