@@ -15,35 +15,40 @@ namespace EList_Frontend.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private IConfiguration? configuration;
-        string? baseUrl;
+        private IConfiguration configuration;
+        string baseUrl;
         List<List> listsOfUser;
+        string token;
+        int userID;
 
         public HomeController(IConfiguration config)
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
+            token= HttpContext.Session.GetString("Token");
+            userID = (int)HttpContext.Session.GetInt32("UserId");
         }
 
         public async Task<IActionResult> Index()
         {
-            string userID = HttpContext.Session.GetString("UserId");
+          
+            
             Debug.WriteLine("User id is: " + userID);
             HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
             string url = baseUrl + "api/list";
             var response = await client.GetAsync(url);
             var userResponse = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
                 listsOfUser = JsonConvert.DeserializeObject<List<List>>(userResponse);
-                Debug.WriteLine("Total number of lists: " + listsOfUser.Count);
+                Debug.WriteLine("Total number of lists: " + listsOfUser.Count());
                 List<List> sortedLists = new List<List>();
-                for (int i = 0; i < listsOfUser.Count; i++)
+                foreach (List list in sortedLists)
                 {
-                    if (listsOfUser[i].UserId == Int32.Parse(userID))
+                    if (list.UserId ==userID)
                     {
-                        sortedLists.Add(listsOfUser[i]);
+                        sortedLists.Add(list);
                     }
                 }
                 if (sortedLists != null)
