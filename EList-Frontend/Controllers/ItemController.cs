@@ -19,11 +19,12 @@ namespace EList_Frontend.Controllers
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
-            token = HttpContext.Session.GetString("Token");
+
         }
         // GET: ItemController
         public ActionResult Index()
         {
+            token = HttpContext.Session.GetString("Token");
             return View();
         }
 
