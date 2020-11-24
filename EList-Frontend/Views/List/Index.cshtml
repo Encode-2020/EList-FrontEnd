@@ -34,35 +34,91 @@
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow nopadding" style="background-color: #D9534F">
         <a class="navbar-brand" href="#"><img src="~/images/logodashboard.png" width="100" style="padding: 5px" /></a>
         <nav class="my-2 my-md-0 mr-md-3 float-right">
-            <a class="p-2 text-dark" href="#">Sign Out</a>
+            <a class="p-2 text-dark float-right" asp-controller="Account" asp-action="Signout">Sign Out</a>
         </nav>
     </div>
 
     <div style="display:table; width:100%">
         <div style="display:table-row">
-
             <div style="display:table-cell; width:30%" class="nopadding container-style-left">
                 <img src="~/images/bgdashboard.png" class="col-12 nopadding" />
             </div>
             <div style="display:table-cell; vertical-align:top; padding-top:20px; padding-left:30px; padding-right:30px">
                 <div class="input-group md-form form-sm form-2 pl-0" style="padding-bottom:30px; padding-right:20px">
-                    <input class="form-control my-0 py-1" type="text" placeholder="Search" aria-label="Search">
-                    <div class="input-group-append">
-                        <span class="input-group-text bg-white lighten-3" id="basic-text1">
-                            <img src="~/images/searchicon.png" width="20" />
-                        </span>
-                        <button class="col-8 btn btn-danger btn-signin" style="margin-left:40px; border-radius: 25px ">+ ADD</button>
+                    
+                    <div class="col-12 " style="display:flex; flex-direction:row; justify-content:space-between">
+                        <div class="col-10 input-group mb-3" style="height:40px">
+                            <input type="text" style="height:40px" class="form-control" placeholder="Search List" aria-label="Search List" aria-describedby="buttonSearch">
+                            <div class="input-group-append" style="height:40px">
+                                <button class="btn btn-danger" type="button" id="buttonSearch">Search</button>
+                            </div>
+                        </div>
+                        <!-- Button trigger modal -->
+                        <button type="button" data-toggle="modal" data-target="#addModal" class="col-2 btn btn-danger btn-signin" style="margin-left:40px; border-radius: 25px; width:120px; height:40px ">+ ADD</button>
+                        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                            <form asp-action="CreateList" asp-controller="List">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger">
+                                            <h5 class="modal-title" id="addModalLabel">Create List</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="text" asp-for="List.ListName" class="form-control " placeholder="List Title e.g Math" />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-danger">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                 </div>
                 <div class="cardParent">
-                    @foreach (var m in Model.List)
+                    @foreach (var m in Model.Lists)
                     {
+                    
+                    <div class="card mb-4 shadow-sm cardSingle">
+                       
+                        <div class="text-center" style="height: 220px">
+                            <div class="card-header" style="height:50px;width:100%;background-color:#C034B7">
+                                <button asp-controller="Home" asp-action="DeleteList" asp-route-id="@m.ListId" type="button" class="close" data-toggle="modal" data-target="#closeModal">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
 
-                        <div class="card mb-4 shadow-sm cardSingle">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addItem" asp-controller="Home" asp-action="GotoList" asp-route-id="@m.ListId" style="display:inline">
-                                <a asp-controller="Home" asp-action="DeleteList" asp-route-id="@m.ListId" style="color:red; float:right">X</a>
-                                <div class="card-header @m.ListColor" style="width:3rem; height:15rem">
+                                <!-- Modal -->
+                                <form asp-action="DeleteList" asp-controller="List" method="post" asp-route-id="@m.ListId">
+                                    <div class="modal fade" id="closeModal" tabindex="-1" aria-labelledby="closeModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Delete List</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you aure you want to delete @m.ListName?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-danger">Save changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                            <button type="button" class="btn" data-toggle="modal" data-target="#addItem" style="display:inline; width: 100%;height: 80%">
+
+                                <div class="@m.ListColor">
                                     @if (m.ListName == null)
                                     {
                                         <h3 style="position:absolute; left:60px; top:6rem; color:black">No name</h3>
@@ -74,119 +130,100 @@
                                 </div>
                             </button>
                         </div>
+
+                    </div>
                         <!-- Modal -->
                         <div class=" modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="addItemTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document" style="width:1200px">
                                 <div class="modal-content">
-                                    <div class="modal-header" style=" width: auto; height: 80px; background-color: #C034B7;">
+                                    <div class="modal-header" style="display:flex;flex-direction:row;justify-content:space-between; width: auto; height: 60px; background-color: #C034B7; text-align:center">
                                         <button style="border:none; background:none; "><img src="~/images/color.png" height="32" width="32" /></button>
-                                        <h5 class="modal-title" id="addItemTitle" style="color: #FFFFFF">@m.ListName</h5>
+                                       
+                                        <h5 class="modal-title" id="addItemTitle" style="color: #FFFFFF;margin-left:auto;margin-right:auto">@m.ListName</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
+
                                     </div>
                                     <div class="modal-body">
                                         <ul class="list-group list-group-flush">
-                                            @for (int i = 0; i < 3; i++)
+                                            @foreach (var i in m.Items)
                                             {
                                                 <li class="list-group-item">
                                                     <!-- Default checked -->
                                                     <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" id="check2">
+                                                        <input type="checkbox" asp-for="@i.isCompleted" class="custom-control-input" id="check2">
+                                                       
                                                         <label class="custom-control-label" for="check2">
-                                                            <input type='text' class="form-control " style="border:none" />
+                                                            @i.Description
+
                                                         </label>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
-
-                                                        <button type="button" class="bell" data-toggle="modal" data-target="#reminder">
-                                                            <span aria-hidden="true">
-                                                                <i class="fa fa-bell-slash" aria-hidden="true"></i>
-                                                            </span>
-                                                        </button>
-
-                                                        <!-- Modal -->
-                                                        <div class="modal fade" id="reminder" tabindex="-2" aria-labelledby="reminderLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="reminderLabel">Pick Date & Time</h5>
-                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <div class='input-group date' id='datetimepicker1'>
-                                                                            <input type='text' class="form-control" />
-                                                                            <span class="input-group-addon">
-                                                                                <span class="glyphicon glyphicon-calendar"></span>
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                        <button type="button" class="btn btn-danger">Save changes</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-
                                                     </div>
                                                 </li>
                                             }
 
-                                            <li class="list-group-item">
-                                                <!-- Default checked -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check2">
-                                                    <label class="custom-control-label" for="check2">Item 6</label>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    <button type="button" class="bell" data-dismiss="modal" aria-label="Bell">
-                                                        <span aria-hidden="true">
-                                                            <i class="fa fa-bell-slash-o" aria-hidden="true"></i>
-                                                        </span>
-                                                    </button>
-
-                                                </div>
-                                            </li>
-
                                         </ul>
-                                        <a data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        <a data-toggle="collapse" href="#collapseCompleted" role="button" aria-expanded="false" aria-controls="collapseCompleted">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="addItemTitle">Completed</h5>
                                             </div>
                                         </a>
-
-                                        <div class="collapse" id="collapseExample">
+                                        <div class="collapse" id="collapseCompleted">
                                             <div class="card card-body">
                                                 <ul class="list-group list-group-flush">
-                                                    <li class="list-group-item">
-                                                        <!-- Default checked -->
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="check1" checked>
-                                                            <label class="custom-control-label" for="check1" style="text-decoration-line: line-through;">Item 1</label>
-                                                        </div>
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        <!-- Default checked -->
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="check2">
-                                                            <label class="custom-control-label" for="check2" style="text-decoration-line: line-through;">Item 2</label>
-                                                        </div>
-                                                    </li>
+                                                    @for (int i = 0; i < 2; i++)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <!-- Default checked -->
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="check1" checked>
+                                                                <label class="custom-control-label" for="check1" style="text-decoration-line: line-through;">Item 1</label>
+                                                            </div>
+                                                        </li>
+
+                                                    }
                                                 </ul>
                                             </div>
                                         </div>
 
 
                                     </div>
+                                  
+
 
                                     <div class="modal-footer">
-                                        <label class="text-muted">Last Edited: 2020-11-23</label>
+                                        <div style="display:flex; flex-direction: column; width:100%">
+                                            <form asp-action="CreateItem" asp-controller="Item"  method="post" style="width:100%;display:flex;flex-direction:row;">
+                                                <label style="width:150px">Add New Item: </label>
+                                                <div class="input-group mb-3">
+                                                    <input type="hidden" asp-for="@m.ListId" value="@m.ListId">
+                                                    <input type="text" asp-for="Item.Description" class="form-control" placeholder="Item description" aria-label="Description" aria-describedby="buttonAdd">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="submit" id="buttonAdd">ADD</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <label class="text-muted float-right"><small style="float:right">Last Edited: 2020-11-23</small></label>
+                                            <button type="button" class="bell" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+                                                <span aria-hidden="true">
+                                                    <i class="fa fa-bell-slash" aria-hidden="true"></i>
+                                                </span>
+                                            </button>
+                                            <div class="collapse" id="collapseExample2">
+                                                <div class='input-group date' id='datetimepicker1'>
+                                                    <input id="datePickerForNotification" type='datetime-local' class="form-control" />
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                                <button onclick="setNotification('@m.ListName')">Set</button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -196,10 +233,23 @@
                         <!--Modal Ended-->
 
                     }
+                   </div>
                 </div>
             </div>
         </div>
-    </div>
+
+    <script>
+        function setNotification(title) {
+            console.log("Test!!");
+            var dateTimeMs = document.getElementById("datePickerForNotification").valueAsNumber;
+            var alarm = new Date(dateTimeMs);
+            var alarmTime = new Date(alarm.getUTCFullYear(), alarm.getUTCMonth(), alarm.getUTCDate(), alarm.getUTCHours(), alarm.getUTCMinutes(), alarm.getUTCSeconds());
+            setTimeout(function () { notifyWithPopup(title); }, alarmTime.getTime() - (new Date()).getTime());
+        }
+        function notifyWithPopup(title) {
+            window.open('popup.aspx?title=' + title, 'new window', 'top=90, left=200, width=300, height=100, dependent=no, location=0, alwaysRaised=no, menubar=no, resizeable=no, center=yes');
+        }
+    </script>
 
     <!--Jquery for Collapse(should be on top)-->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>

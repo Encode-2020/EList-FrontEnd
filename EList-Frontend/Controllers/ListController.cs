@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using EList_Frontend.Models;
+using EList_Frontend.Models.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,15 +19,15 @@ namespace EList_Frontend.Controllers
         private IConfiguration configuration;
         string baseUrl;
         List<List> listsOfUser;
-        string token;
-        int userID;
+        public static string token;
+        public static int userID;
 
         public ListController(IConfiguration config)
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
            
-           
+
         }
 
         // GET: ListController
@@ -33,6 +35,7 @@ namespace EList_Frontend.Controllers
         {
             userID = (int)HttpContext.Session.GetInt32("UserId");
             token = HttpContext.Session.GetString("Token");
+
             Debug.WriteLine("User id is: " + userID);
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
@@ -55,7 +58,7 @@ namespace EList_Frontend.Controllers
                 }
                 if (sortedLists != null)
                 {
-                    listItemModel.List = sortedLists;
+                    listItemModel.Lists = sortedLists;
                     return View(listItemModel);
                 }
             }
@@ -67,20 +70,41 @@ namespace EList_Frontend.Controllers
             return View();
         }
 
-        // GET: ListController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // POST: ListController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> CreateList(List list)
         {
+            List createdList = new List();
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    HttpClient client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    string url = baseUrl + "api/list";
+                    var jsonObj = JsonConvert.SerializeObject(new
+                    {
+                        listname = list.ListName,
+                        userid= userID,
+                        items = list.Items,
+                        reminderdatetime = list.ReminderDateTime
+
+                    });
+                    var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(url, content);
+                    var userResponse = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["ListSuccess"] = "List created successfull!";
+                        return Redirect("/List/Index");
+                    }
+                    else
+                    {
+                        TempData["FailedListCreation"] = "List cannot be created.";
+                    }
+                }
+                return View();
             }
             catch
             {
@@ -128,6 +152,10 @@ namespace EList_Frontend.Controllers
             {
                 return View();
             }
+        }
+        public ActionResult Popup(Notification notification)
+        {
+            return View(notification);
         }
     }
 }

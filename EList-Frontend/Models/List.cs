@@ -8,7 +8,11 @@ namespace EList_Frontend.Models
 {
     public enum ListColors {
         BG_DANGER,
-        BG_INFO
+        BG_INFO,
+        BG_PRIMARY,
+        BG_SUCCESS,
+        BG_SECONDARY,
+        BG_WARNING
     }
 
     public class List
@@ -17,7 +21,8 @@ namespace EList_Frontend.Models
         public int UserId { get; set; }
         [Required(ErrorMessage = "List Title is required")]
         public string ListName { get; set; }
-        public string ListColor { get; set; }
+        public ListColors ListColor { get; set; }
+        public DateTime ReminderDateTime { get; set; }
         public ICollection<Item> Items { get; set; }
     }
 }
