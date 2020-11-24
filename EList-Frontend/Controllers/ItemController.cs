@@ -17,13 +17,13 @@ namespace EList_Frontend.Controllers
 
         private IConfiguration configuration;
         string baseUrl;
-        string token;
+        public static string token;
 
         public ItemController(IConfiguration config)
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
-            token = HttpContext.Session.GetString("Token");
+           
         }
         // GET: ItemController
         public ActionResult Index()
@@ -48,6 +48,7 @@ namespace EList_Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateItemAsync(Item item)
         {
+            token = HttpContext.Session.GetString("Token");
             Item createdItem = new Item();
             try
             {
@@ -59,8 +60,8 @@ namespace EList_Frontend.Controllers
                     var jsonObj = JsonConvert.SerializeObject(new
                     {
                         description = item.Description,
-                        isCompleted = item.isCompleted,
-                        listId = item.ListId
+                        iscompleted = item.isCompleted,
+                         listId = item.ListId
                     });
                     var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
                     var response = await client.PostAsync(url, content);
