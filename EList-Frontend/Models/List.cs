@@ -13,6 +13,7 @@ namespace EList_Frontend.Models
         [Required(ErrorMessage = "List Title is required")]
         public string ListName { get; set; }
         public string ListColor { get; set; }
+        public DateTime ReminderDateTime { get; set; }
         public ICollection<Item> Items { get; set; }
     }
 }

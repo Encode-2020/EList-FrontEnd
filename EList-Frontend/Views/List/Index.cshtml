@@ -51,12 +51,32 @@
                         <span class="input-group-text bg-white lighten-3" id="basic-text1">
                             <img src="~/images/searchicon.png" width="20" />
                         </span>
-                        <button class="col-8 btn btn-danger btn-signin" style="margin-left:40px; border-radius: 25px ">+ ADD</button>
+                        <!-- Button trigger modal -->
+                        <button type="button" data-toggle="modal" data-target="#addModal" class="col-8 btn btn-danger btn-signin" style="margin-left:40px; border-radius: 25px ">+ ADD</button>
+                        <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addModalLabel"><input type="text" asp-for="List.ListName" /></h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                       Please add items!
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-danger" asp-action="Create" asp-controller="List">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
                 <div class="cardParent">
-                    @foreach (var m in Model.List)
+                    @foreach (var m in Model.Lists)
                     {
 
                         <div class="card mb-4 shadow-sm cardSingle">

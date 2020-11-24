@@ -7,7 +7,8 @@ namespace EList_Frontend.Models.ViewModel
 {
     public class ListItemModel
     {
-        List<List> Lists { get; set; }
-        List<Item> Items { get; set; }
+        public List List { get; set; }
+       public List<List> Lists { get; set; }
+        public List<Item> Items { get; set; }
     }
 }
