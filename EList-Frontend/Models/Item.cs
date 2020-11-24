@@ -11,5 +11,7 @@ namespace EList_Frontend.Models
         public string ListId { get; set; }
         public string Description { get; set; }
         public DateTime ReminderDateTime { get; set; }
+        public bool isCompleted { get; set; }
+
     }
 }

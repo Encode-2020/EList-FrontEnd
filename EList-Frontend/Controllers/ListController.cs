@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EList_Frontend.Models;
+using EList_Frontend.Models.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +56,7 @@ namespace EList_Frontend.Controllers
                 }
                 if (sortedLists != null)
                 {
-                    listItemModel.List = sortedLists;
+                    listItemModel.Lists = sortedLists;
                     return View(listItemModel);
                 }
             }
@@ -128,6 +129,10 @@ namespace EList_Frontend.Controllers
             {
                 return View();
             }
+        }
+        public ActionResult Popup(Notification notification)
+        {
+            return View(notification);
         }
     }
 }
