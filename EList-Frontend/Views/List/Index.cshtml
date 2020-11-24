@@ -142,6 +142,25 @@
                                             <i class="fa fa-bell-slash" aria-hidden="true"></i>
                                         </span>
                                         <h5 class="modal-title text-center" id="addItemTitle" style="color: #FFFFFF; margin-left:30%">@m.ListName</h5>
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header" style=" width: auto; height: 80px; background-color: #C034B7;">
+                                        <button style="border:none; background:none; "><img src="~/images/color.png" height="32" width="32" /></button>
+                                        <h5 class="modal-title" id="addItemTitle" style="color: #FFFFFF">@m.ListName</h5>
+                                        <button type="button" class="bell" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+                                            <span aria-hidden="true">
+                                                <i class="fa fa-bell-slash" aria-hidden="true"></i>
+                                            </span>
+                                        </button>
+                                        <div class="collapse" id="collapseExample2">
+                                            <div class='input-group date' id='datetimepicker1'>
+                                                <input id="datePickerForNotification" type='datetime-local' class="form-control" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                            </div>
+                                            <button onclick="setNotification('@m.ListName')">Set</button>
+                                        </div>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -222,6 +241,19 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function setNotification(title) {
+            console.log("Test!!");
+            var dateTimeMs = document.getElementById("datePickerForNotification").valueAsNumber;
+            var alarm = new Date(dateTimeMs);
+            var alarmTime = new Date(alarm.getUTCFullYear(), alarm.getUTCMonth(), alarm.getUTCDate(), alarm.getUTCHours(), alarm.getUTCMinutes(), alarm.getUTCSeconds());
+            setTimeout(function () { notifyWithPopup(title); }, alarmTime.getTime() - (new Date()).getTime());
+        }
+        function notifyWithPopup(title) {
+            window.open('popup.aspx?title=' + title, 'new window', 'top=90, left=200, width=300, height=100, dependent=no, location=0, alwaysRaised=no, menubar=no, resizeable=no, center=yes');
+        }
+    </script>
 
     <!--Jquery for Collapse(should be on top)-->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>

@@ -153,5 +153,9 @@ namespace EList_Frontend.Controllers
                 return View();
             }
         }
+        public ActionResult Popup(Notification notification)
+        {
+            return View(notification);
+        }
     }
 }
