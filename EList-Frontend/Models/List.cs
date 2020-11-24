@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace EList_Frontend.Models
 {
+    public enum ListColors {
+        BG_DANGER,
+        BG_INFO
+    }
+
     public class List
     {
         public int ListId { get; set; }
