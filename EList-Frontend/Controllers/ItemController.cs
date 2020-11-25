@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using EList_Frontend.Models;
+using EList_Frontend.Models.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -45,8 +46,7 @@ namespace EList_Frontend.Controllers
 
         // POST: ItemController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateItemAsync(Item item)
+        public async Task<ActionResult> CreateItem(ListItemModel listItemModel)
         {
             token = HttpContext.Session.GetString("Token");
             Item createdItem = new Item();
@@ -59,9 +59,9 @@ namespace EList_Frontend.Controllers
                     string url = baseUrl + "api/item";
                     var jsonObj = JsonConvert.SerializeObject(new
                     {
-                        description = item.Description,
-                        iscompleted = item.isCompleted,
-                         listId = item.ListId
+                        description = listItemModel.Item.Description,
+                        iscompleted = listItemModel.Item.isCompleted,
+                         listId = listItemModel.List.ListId
                     });
                     var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
                     var response = await client.PostAsync(url, content);
@@ -69,8 +69,8 @@ namespace EList_Frontend.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         TempData["ItemSuccess"] = "Item created successfull!";
-                        //return Redirect("/List/Index");
-                        return View();
+                        return Redirect("/List/Index");
+                        //return View();
                     }
                     else
                     {
@@ -94,10 +94,11 @@ namespace EList_Frontend.Controllers
         // POST: ItemController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Item item)
         {
             try
             {
+
                 return RedirectToAction(nameof(Index));
             }
             catch

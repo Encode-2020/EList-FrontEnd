@@ -161,9 +161,34 @@
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true"><i class="fas fa-edit"></i></span>
+                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" style="margin-left:10px;margin-right:10px">
+                                                            <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
                                                         </button>
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                            <form asp-action="EditItem" asp-controller="Item" method="post">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="editModalLabel">Edit Item</h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <input asp-for="Item.Description" />
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                            <button type="submit" class="btn btn-primary" asp-route-id="@m.ListId">Save changes</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+
+                                                        </div>
+                                                        <!-- Modal End-->
+
                                                     </div>
                                                 </li>
                                             }
@@ -199,17 +224,18 @@
 
                                     <div class="modal-footer">
                                         <div style="display:flex; flex-direction: column; width:100%">
+                                            <label style="width:150px">Add New Item: </label>
                                             <form asp-action="CreateItem" asp-controller="Item" method="post" style="width:100%;display:flex;flex-direction:row;">
-                                                <label style="width:150px">Add New Item: </label>
                                                 <div class="input-group mb-3">
-                                                    <input type="hidden" asp-for="@m.ListId" value="@m.ListId">
+                                                    <input type="hidden" name="ListId" value="@m.ListId"/>
+                         
                                                     <input type="text" asp-for="Item.Description" class="form-control" placeholder="Item description" aria-label="Description" aria-describedby="buttonAdd">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary" type="submit" id="buttonAdd">ADD</button>
                                                     </div>
+
                                                 </div>
                                             </form>
-
                                             <label class="text-muted float-right"><small style="float:right">Last Edited: 2020-11-23</small></label>
                                             <button type="button" class="bell" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
                                                 <span aria-hidden="true">
@@ -217,7 +243,7 @@
                                                 </span>
                                             </button>
 
-                                    
+
                                             <div class="collapse" id="collapseExample2">
                                                 <div class='input-group date' id='datetimepicker1'>
                                                     <input id="datePickerForNotification" type='datetime-local' class="form-control" />
@@ -242,7 +268,8 @@
                 </div>
             </div>
         </div>
-
+    <!--Jquery for Collapse(should be on top)-->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
     <script type="text/javascript">
         function setNotification(title) {
             var dateTimeMs = document.getElementById("datePickerForNotification").valueAsNumber;
@@ -255,8 +282,6 @@
         }
     </script>
 
-    <!--Jquery for Collapse(should be on top)-->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
     <script>
         $(function () {
             $('#datetimepicker1').datetimepicker();
