@@ -153,13 +153,16 @@
                                                     <!-- Default checked -->
                                                     <div class="custom-control custom-checkbox">
                                                         <input type="checkbox" asp-for="@i.isCompleted" class="custom-control-input" id="check2">
-                                                       
+
                                                         <label class="custom-control-label" for="check2">
                                                             @i.Description
 
                                                         </label>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true"><i class="fas fa-edit"></i></span>
                                                         </button>
                                                     </div>
                                                 </li>
@@ -196,7 +199,7 @@
 
                                     <div class="modal-footer">
                                         <div style="display:flex; flex-direction: column; width:100%">
-                                            <form asp-action="CreateItem" asp-controller="Item"  method="post" style="width:100%;display:flex;flex-direction:row;">
+                                            <form asp-action="CreateItem" asp-controller="Item" method="post" style="width:100%;display:flex;flex-direction:row;">
                                                 <label style="width:150px">Add New Item: </label>
                                                 <div class="input-group mb-3">
                                                     <input type="hidden" asp-for="@m.ListId" value="@m.ListId">
@@ -213,6 +216,8 @@
                                                     <i class="fa fa-bell-slash" aria-hidden="true"></i>
                                                 </span>
                                             </button>
+
+                                    
                                             <div class="collapse" id="collapseExample2">
                                                 <div class='input-group date' id='datetimepicker1'>
                                                     <input id="datePickerForNotification" type='datetime-local' class="form-control" />
