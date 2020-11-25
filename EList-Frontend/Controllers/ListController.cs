@@ -21,6 +21,7 @@ namespace EList_Frontend.Controllers
         List<List> listsOfUser;
         public static string token;
         public static int userID;
+        public List<List> sortedLists;
 
         public ListController(IConfiguration config)
         {
@@ -46,9 +47,10 @@ namespace EList_Frontend.Controllers
             {
                 listsOfUser = JsonConvert.DeserializeObject<List<List>>(userResponse);
                 Debug.WriteLine("Total number of lists: " + listsOfUser.Count());
-                List<List> sortedLists = new List<List>();
-                List<Item> sortedItems = new List<Item>();
+                 sortedLists = new List<List>();
                 ListItemModel listItemModel = new ListItemModel();
+                listItemModel.Items = new List<Item>();
+                listItemModel.CompletedItems = new List<Item>();
                 foreach (List list in listsOfUser)
                 {
                     if (list.UserId == userID)
@@ -56,6 +58,25 @@ namespace EList_Frontend.Controllers
                         sortedLists.Add(list);
                     }
                 }
+
+                GetListColors();
+
+                foreach (List slist in sortedLists)
+                {
+                    foreach(Item i in slist.Items)
+                    {
+                        if (i.IsCompleted)
+                        {
+                            listItemModel.CompletedItems.Add(i);
+
+                        } else
+                        {
+                            listItemModel.Items.Add(i);
+                        }
+                    }
+                }
+
+
                 if (sortedLists != null)
                 {
                     listItemModel.Lists = sortedLists;
@@ -63,6 +84,35 @@ namespace EList_Frontend.Controllers
                 }
             }
             return View();
+        }
+        public void GetListColors()
+        {
+            foreach (List l in sortedLists)
+            {
+                if (l.ListColor == ListColors.BG_DANGER)
+                {
+                    l.color = "bg-danger";
+                } else if (l.ListColor == ListColors.BG_INFO)
+                {
+                    l.color = "bg-info";
+                }
+                else if (l.ListColor == ListColors.BG_PRIMARY)
+                {
+                    l.color = "bg-primary";
+                }
+                else if (l.ListColor == ListColors.BG_SECONDARY)
+                {
+                    l.color = "bg-secondary";
+                }
+                else if (l.ListColor == ListColors.BG_SUCCESS)
+                {
+                    l.color = "bg-success";
+                }
+                else
+                {
+                    l.color = "bg-warning";
+                }
+            }
         }
         // GET: ListController/Details/5
         public ActionResult Details(int id)
@@ -75,7 +125,6 @@ namespace EList_Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateList(List list)
         {
-            List createdList = new List();
             try
             {
                 if (ModelState.IsValid)
@@ -121,11 +170,41 @@ namespace EList_Frontend.Controllers
         // POST: ListController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> EditList( ListItemModel listItemModel)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    listItemModel.List.LastEdited = DateTime.Now;
+                    HttpClient client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    string url = baseUrl + "api/list/"+ listItemModel.List.ListId;
+                    var jsonObj = JsonConvert.SerializeObject(new
+                    {
+                        listname = listItemModel.List.ListName,
+                        userid = listItemModel.List.UserId,
+                        items = listItemModel.List.Items,
+                        reminderdatetime = listItemModel.List.ReminderDateTime,
+                        listcolor = listItemModel.List.ListColor,
+                        listid= listItemModel.List.ListId,
+                        lastedited= listItemModel.List.LastEdited
+
+                    });
+                    var content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+                    var response = await client.PutAsync(url, content);
+                    var userResponse = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["message"] = "List edited successfully!";
+                        return Redirect("/List/Index");
+                    }
+                    else
+                    {
+                        TempData["error"] = "List cannot be edited.";
+                    }
+                }
+                return View();
             }
             catch
             {
@@ -133,20 +212,32 @@ namespace EList_Frontend.Controllers
             }
         }
 
-        // GET: ListController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: ListController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeleteList(int id)
         {
+            token = HttpContext.Session.GetString("Token");
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    HttpClient client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    string url = baseUrl + "api/list/"+id;
+                    var response = await client.DeleteAsync(url);
+                    var userResponse = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["ListSuccess"] = "List deleted successfully!";
+                        return Redirect("/List/Index");
+                    }
+                    else
+                    {
+                        TempData["FailedList"] = "List cannot be deleted.";
+                    }
+                }
+                return View();
             }
             catch
             {

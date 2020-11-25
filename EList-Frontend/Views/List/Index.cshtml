@@ -16,14 +16,7 @@
     <link href="~/css/listStyle.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="screen" />
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <!--Date time Picker-->
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 
     <title>EList - Dashboard</title>
     <meta name="msapplication-config" content="/docs/4.5/assets/img/favicons/browserconfig.xml">
@@ -45,7 +38,7 @@
             </div>
             <div style="display:table-cell; vertical-align:top; padding-top:20px; padding-left:30px; padding-right:30px">
                 <div class="input-group md-form form-sm form-2 pl-0" style="padding-bottom:30px; padding-right:20px">
-                    
+
                     <div class="col-12 " style="display:flex; flex-direction:row; justify-content:space-between">
                         <div class="col-10 input-group mb-3" style="height:40px">
                             <input type="text" style="height:40px" class="form-control" placeholder="Search List" aria-label="Search List" aria-describedby="buttonSearch">
@@ -66,7 +59,15 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <input type="text" asp-for="List.ListName" class="form-control " placeholder="List Title e.g Math" />
+                                            <div class="form-group">
+                                                <input type="text" asp-for="List.ListName" class="form-control " placeholder="List Title e.g Math" />
+
+                                            </div>
+                                                <div class="form-group">
+                                                    <select asp-for="List.ListColor" asp-items="Html.GetEnumSelectList<ListColors>()" class="form-control">
+                                                        <option value="" disabled="disabled" selected>Choose a List Color</option>
+                                                    </select>
+                                                </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -77,69 +78,121 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
+                @if (TempData["message"] != null)
+                {<div class="alert alert-success" id="alert" style="width:50%;margin:10px;text-align:center">@TempData["message"]</div>}
+                @if (TempData["error"] != null)
+                {<div class="alert alert-danger" id="alert" style="width:50%;margin:10px;text-align:center">@TempData["error"]</div>}
                 <div class="cardParent">
                     @foreach (var m in Model.Lists)
                     {
-                    
-                    <div class="card mb-4 shadow-sm cardSingle">
-                       
-                        <div class="text-center" style="height: 220px">
-                            <div class="card-header" style="height:50px;width:100%;background-color:#C034B7">
-                                <button asp-controller="Home" asp-action="DeleteList" asp-route-id="@m.ListId" type="button" class="close" data-toggle="modal" data-target="#closeModal">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
 
-                                <!-- Modal -->
-                                <form asp-action="DeleteList" asp-controller="List" method="post" asp-route-id="@m.ListId">
-                                    <div class="modal fade" id="closeModal" tabindex="-1" aria-labelledby="closeModalLabel" aria-hidden="true">
+                        <div class="card mb-4 shadow-sm cardSingle">
+
+                            <div class="text-center" style="height: 220px">
+                                <div class="card-header @m.color" style="height:50px;width:100%;">
+                                    <button type="button" class="close" data-toggle="modal" data-target="#closeModal@(m.ListId)">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <button type="button" class="btn" data-toggle="modal" data-target="#editList@(m.ListId)" style="border:none;background:none;float: left !important;line-height: 1">
+                                        <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
+                                    </button>
+
+                                    <!-- Modal -->
+
+                                    <div class="modal fade" id="closeModal@(m.ListId)" tabindex="-1" aria-labelledby="closeModalLabel4" aria-hidden="true">
+
                                         <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Delete List</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
+                                            <form asp-action="DeleteList" asp-controller="List" method="post" asp-route-id="@m.ListId">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Delete List</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you aure you want to delete @m.ListName?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </div>
                                                 </div>
-                                                <div class="modal-body">
-                                                    Are you aure you want to delete @m.ListName?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-danger">Save changes</button>
-                                                </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </div>
-                                </form>
 
+                                    </div>
+
+
+                                    <!--Edit List Modal-->
+                                    <div class="modal fade" id="editList@(m.ListId)" tabindex="-1" aria-labelledby="editListLabel4" aria-hidden="true">
+
+                                        <div class="modal-dialog">
+                                            <form asp-action="EditList" asp-controller="List" method="post" asp-route-id="@m.ListId">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editListLabel">Edit List</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type=hidden asp-for="List.Items" value="@m.Items" />
+                                                        <input type=hidden asp-for="List.ReminderDateTime" value="@m.ReminderDateTime" />
+                                                        <input type=hidden asp-for="List.LastEdited" value="@m.LastEdited" />
+                                                        <input type=hidden asp-for="List.ListId" value="@m.ListId" />
+                                                        <div class="form-group">
+                                                            <input asp-for="List.ListName" class="form-control" value="@m.ListName" />
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <select asp-for="List.ListColor" asp-items="Html.GetEnumSelectList<ListColors>()" class="form-control">
+                                                                <option value="" disabled="disabled" selected>Choose a List Color</option>
+                                                                <option value="@m.ListColor" selected>@m.ListColor</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger">Save</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+
+
+
+                                </div>
+
+
+
+                                <button type="button" class="btn" data-toggle="modal" data-target="#addItem@(m.ListId)" style="display:inline; width: 100%;height: 80%">
+
+                                    <div class="@m.ListColor">
+                                        @if (m.ListName == null)
+                                        {
+                                            <h3 style="position:center; left:60px; top:6rem; color:black">No name</h3>
+                                        }
+                                        else
+                                        {
+                                            <h3 style="position:center; left:60px; top:6rem; color:black">@m.ListName</h3>
+                                        }
+                                    </div>
+                                </button>
                             </div>
 
-                            <button type="button" class="btn" data-toggle="modal" data-target="#addItem" style="display:inline; width: 100%;height: 80%">
-
-                                <div class="@m.ListColor">
-                                    @if (m.ListName == null)
-                                    {
-                                        <h3 style="position:absolute; left:60px; top:6rem; color:black">No name</h3>
-                                    }
-                                    else
-                                    {
-                                        <h3 style="position:absolute; left:60px; top:6rem; color:black">@m.ListName</h3>
-                                    }
-                                </div>
-                            </button>
                         </div>
-
-                    </div>
                         <!-- Modal -->
-                        <div class=" modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="addItemTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable" role="document" style="width:1200px">
+                        <div class=" modal fade" id="addItem@(m.ListId)" tabindex="-1" role="dialog" aria-labelledby="addItemTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document" style="width:1200px">
                                 <div class="modal-content">
                                     <div class="modal-header" style="display:flex;flex-direction:row;justify-content:space-between; width: auto; height: 60px; background-color: #C034B7; text-align:center">
                                         <button style="border:none; background:none; "><img src="~/images/color.png" height="32" width="32" /></button>
-                                       
-                                        <h5 class="modal-title" id="addItemTitle" style="color: #FFFFFF;margin-left:auto;margin-right:auto">@m.ListName</h5>
+
+                                        <h3 class="modal-title" id="addItemTitle" style="color: #FFFFFF;margin-left:auto;margin-right:auto;">@m.ListName</h3>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -147,53 +200,74 @@
                                     </div>
                                     <div class="modal-body">
                                         <ul class="list-group list-group-flush">
-                                            @foreach (var i in m.Items)
+
+                                            @foreach (var i in Model.Items)
                                             {
+
                                                 <li class="list-group-item">
                                                     <!-- Default checked -->
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" asp-for="@i.isCompleted" class="custom-control-input" id="check2">
+                                                    <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
+                                                        <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
+                                                        <input type="hidden" asp-for="Item.IsCompleted" value="@i.IsCompleted" />
+                                                        <button type="submit" style="background:none;border:none"><img src=@i.Url style="border:none;background:none; height:16px;width:16px" /></button>
 
-                                                        <label class="custom-control-label" for="check2">
-                                                            @i.Description
+                                                    </form>
+                                                    <label for="@i.ItemId">
+                                                        @i.Description
+                                                    </label>
+                                                    <!-- Button trigger modal -->
+                                                    <button type="button" class="btn close" data-toggle="modal" aria-label="Close" data-target="#deleteItem@(i.ItemId)">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="deleteItem@(i.ItemId)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <form asp-action="DeleteItem" asp-controller="Item" method="post" asp-route-id="@m.ListId" asp-route-itemId="@i.ItemId">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        Are you sure you want to delete?
+                                                                    </div>
 
-                                                        </label>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" style="margin-left:10px;margin-right:10px">
-                                                            <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
-                                                        </button>
-                                                        <!-- Modal -->
-                                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                            <form asp-action="EditItem" asp-controller="Item" method="post">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="editModalLabel">Edit Item</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <input asp-for="Item.Description" />
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                            <button type="submit" class="btn btn-primary" asp-route-id="@m.ListId">Save changes</button>
-                                                                        </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                                                        <button type="submit" class="btn btn-danger">Delete</button>
+
                                                                     </div>
                                                                 </div>
                                                             </form>
-
                                                         </div>
-                                                        <!-- Modal End-->
+                                                    </div>
+
+                                                    <!-- Button trigger modal -->
+                                                    <button class="btn btn-item-edit" type="button" data-toggle="collapse" data-target="#editCollapse@(i.ItemId)" aria-expanded="false" aria-controls="editCollapse" style=" margin-left: 10px; margin-right: 10px; border: none; background: none; float: right; line-height: 1;">
+                                                        <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
+                                                    </button>
+                                                    <div class="collapse" id="editCollapse@(i.ItemId)">
+                                                        <div class="col-12">
+                                                            <form asp-action="EditItem" asp-controller="Item" asp-route-id="@m.ListId" method="post" class="col-12">
+                                                                <div class="input-group mb-3">
+                                                                    <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
+                                                                    <input class="col-8 form-control" asp-for="Item.Description" value="@i.Description" aria-label="Description" aria-describedby="buttonEdit" style=" padding: 15px; height: 40px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"> <!-- style=" padding: 15px; height: 40px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"-->
+                                                                    <div class="input-group-append">
+                                                                        <button class="btn btn-outline-danger" type="submit" id="buttonEdit">Save</button>
+                                                                    </div>
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
 
                                                     </div>
                                                 </li>
                                             }
-
                                         </ul>
+
                                         <a data-toggle="collapse" href="#collapseCompleted" role="button" aria-expanded="false" aria-controls="collapseCompleted">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="addItemTitle">Completed</h5>
@@ -202,16 +276,49 @@
                                         <div class="collapse" id="collapseCompleted">
                                             <div class="card card-body">
                                                 <ul class="list-group list-group-flush">
-                                                    @for (int i = 0; i < 2; i++)
+                                                    @foreach (var ci in Model.CompletedItems)
                                                     {
                                                         <li class="list-group-item">
                                                             <!-- Default checked -->
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input" id="check1" checked>
-                                                                <label class="custom-control-label" for="check1" style="text-decoration-line: line-through;">Item 1</label>
+                                                            <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
+                                                                <input type="hidden" asp-for="Item.ItemId" value="@ci.ItemId" />
+                                                                <input type="hidden" asp-for="Item.IsCompleted" value="@ci.IsCompleted" />
+                                                                <button type="submit" style="background:none;border:none"><img src=@ci.Url style="border:none;background:none; height:16px;width:16px" /></button>
+
+                                                            </form>
+                                                            <label for="@ci.ItemId">
+                                                                @ci.Description
+                                                            </label>
+                                                            <!-- Button trigger modal -->
+                                                            <button type="button" class="btn close" data-toggle="modal" aria-label="Close" data-target="#deleteItem@(ci.ItemId)">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                            <!-- Modal -->
+                                                            <div class="modal fade" id="deleteItem@(ci.ItemId)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <form asp-action="DeleteItem" asp-controller="Item" method="post" asp-route-id="@m.ListId" asp-route-itemId="@ci.ItemId">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                    <span aria-hidden="true">&times;</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                Are you sure you want to delete?
+                                                                            </div>
+
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                                                                <button type="submit" class="btn btn-danger">Delete</button>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
                                                             </div>
                                                         </li>
-
                                                     }
                                                 </ul>
                                             </div>
@@ -219,16 +326,14 @@
 
 
                                     </div>
-                                  
-
 
                                     <div class="modal-footer">
                                         <div style="display:flex; flex-direction: column; width:100%">
                                             <label style="width:150px">Add New Item: </label>
-                                            <form asp-action="CreateItem" asp-controller="Item" method="post" style="width:100%;display:flex;flex-direction:row;">
+                                            <form asp-action="CreateItem" asp-controller="Item" asp-route-id="@m.ListId" method="post" style="width:100%;display:flex;flex-direction:row;">
                                                 <div class="input-group mb-3">
-                                                    <input type="hidden" name="ListId" value="@m.ListId"/>
-                         
+                                                    <input type="hidden" name="ListId" value="@m.ListId" />
+
                                                     <input type="text" asp-for="Item.Description" class="form-control" placeholder="Item description" aria-label="Description" aria-describedby="buttonAdd">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-secondary" type="submit" id="buttonAdd">ADD</button>
@@ -236,7 +341,7 @@
 
                                                 </div>
                                             </form>
-                                            <label class="text-muted float-right"><small style="float:right">Last Edited: 2020-11-23</small></label>
+                                            <label class="text-muted float-right"><small style="float:right">Last Edited: @m.LastEdited.ToShortDateString() @m.LastEdited.ToShortTimeString()</small></label>
                                             <button type="button" class="bell" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
                                                 <span aria-hidden="true">
                                                     <i class="fa fa-bell-slash" aria-hidden="true"></i>
@@ -251,7 +356,7 @@
                                                         <span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
                                                 </div>
-                                                <button onclick="setNotification('@m.ListName')">Set</button>
+                                                <button class="btn btn-outline-secondary" onclick="setNotification('@m.ListName')">Set</button>
                                             </div>
                                         </div>
 
@@ -264,34 +369,15 @@
                         <!--Modal Ended-->
 
                     }
-                   </div>
                 </div>
             </div>
         </div>
+    </div>
     <!--Jquery for Collapse(should be on top)-->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        function setNotification(title) {
-            var dateTimeMs = document.getElementById("datePickerForNotification").valueAsNumber;
-            var alarm = new Date(dateTimeMs);
-            var alarmTime = new Date(alarm.getUTCFullYear(), alarm.getUTCMonth(), alarm.getUTCDate(), alarm.getUTCHours(), alarm.getUTCMinutes(), alarm.getUTCSeconds());
-            setTimeout(function () { notifyWithPopup(title); }, alarmTime.getTime() - (new Date()).getTime());
-        }
-        function notifyWithPopup(title) {
-            window.open('popup?title=' + title, 'new window', 'width=350, height=150, dependent=no, location=0, alwaysRaised=no, menubar=no, resizeable=no, scrollbars=no, toolbar=no, status=no, center=yes');
-        }
+    <script type="text/javascript" src="~/js/Notification.js">
     </script>
-
-    <script>
-        $(function () {
-            $('#datetimepicker1').datetimepicker();
-        });</script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
     <script src="~/lib/js/bootstrap.min.js"></script>
 
-    <!-- jQuery and JS bundle w/ Popper.js -->
-    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>*@
 </body>
 </html>
