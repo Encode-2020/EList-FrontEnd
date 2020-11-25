@@ -60,3 +60,14 @@ html {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px
 }
+.btn-item-edit {
+    margin-left: 10px;
+    margin-right: 10px;
+    border: none;
+    background: none;
+    float: right;
+    line-height: 1;
+}
+input[type=checkbox] {
+    -webkit-appearance: checkbox;
+}
