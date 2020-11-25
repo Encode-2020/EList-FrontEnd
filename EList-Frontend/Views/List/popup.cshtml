@@ -1,6 +1,5 @@
-﻿@model Notification
-
-@{
+﻿@{
+    Layout = "";
 }
 
 <!DOCTYPE html>
@@ -16,20 +15,18 @@
     </style>
 </head>
 
-<body style="width: 300px; height: 91.45px;">
-    <section class="pop-background-color solid-board">
-        <h2>List Notification</h2>
-
-        <h4 id="uiTitle">@Model.Title</h4>
-        <br />
+<body style="width: 300px;height: 100px;background-color: #908383; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:white;">
+    <div style="text-align:center">
+        <h1>Reminder!</h1>
+        <h2 id="uiTitle">sample</h2>
         <button id="okBtn">OK</button>
-
-    </section>
-    <script>
-        //document.getElementById("uiTitle").innerHTML = getParameterByName("title");
+    </div>
+    <script type="text/javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("uiTitle").innerHTML = urlParams.get('title');
         document.getElementById("okBtn").addEventListener("click", closePopup, true);
         function closePopup() {
-            window.location.href = "index.cshtml";
+            window.close('', '_parent', '');
         }
     </script>
 
