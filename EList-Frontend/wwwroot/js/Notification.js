@@ -5,5 +5,6 @@
     setTimeout(function () { notifyWithPopup(title); }, alarmTime.getTime() - (new Date()).getTime());
 }
 function notifyWithPopup(title) {
-    window.open('popup?title=' + title, 'new window', 'width=350, height=150, dependent=no, location=0, alwaysRaised=no, menubar=no, resizeable=no, scrollbars=no, toolbar=no, status=no, center=yes');
+    window.open('popup?title=' + title, 'new window', 'width=350, height=150, dependent=no, location=0, alwaysRaised=no, menubar=no, resizeable=no, scrollbars=no, toolbar=no, status=no, center=yes, overflow-y=hidden');
 }
+
