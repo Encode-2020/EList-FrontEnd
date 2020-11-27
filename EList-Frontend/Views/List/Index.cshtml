@@ -12,8 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <link href="~/lib/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/listStyle.css" rel="stylesheet">
+    <link href="~/lib/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="screen" />
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 
@@ -28,11 +28,9 @@
 
 </head>
 <body style="background-color: #908383">
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow nopadding" style="background-color: #D9534F">
+    <div class="d-flex flex-md-row align-items-center justify-content-between p-3 px-md-4 mb-3 border-bottom box-shadow nopadding" style="background-color: #D9534F">
         <a class="navbar-brand" href="#"><img src="~/images/logodashboard.png" width="100" style="padding: 5px" /></a>
-        <nav class="my-2 my-md-0 mr-md-3 float-right" style="float:right">
-            <a class="btn btn-outline-dangers float-right" asp-controller="Account" asp-action="Signout">Sign Out</a>
-        </nav>
+            <a class="btn btn-outline-dangerst"  asp-controller="Account" asp-action="Signout" style=" float: right; margin-right: 20px; color: #ffffff; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 16px;">Sign Out</a>
     </div>
 
     <div style="display:table; width:100%">
@@ -366,7 +364,26 @@
                                                     <span class=" input-group-addon">
                                                         <span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
-                                                    <button class="col-2 btn btn-outline-secondary" onclick="setNotification('@m.ListName')" style="margin-top:20px;border-top-left-radius:0px;border-bottom-left-radius:0px">Set</button>
+                                                    <button class="col-2 btn btn-outline-secondary" type="button" onclick="setNotification('@m.ListName')" data-toggle="modal" data-target="#reminderSet" style="margin-top:20px;border-top-left-radius:0px;border-bottom-left-radius:0px">Set</button>
+                                                </div>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="reminderSet" tabindex="-1" role="dialog" aria-labelledby="reminderSetLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header @m.color" >
+                                                                <h5 class="modal-title" id="reminderSetLabel">Reminder Set</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                               Reminder has been set!
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
