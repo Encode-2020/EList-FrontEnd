@@ -30,6 +30,7 @@
 <body style="background-color: #908383">
     <div class="d-flex flex-md-row align-items-center justify-content-between p-3 px-md-4 mb-3 border-bottom box-shadow nopadding" style="background-color: #D9534F">
         <a class="navbar-brand" href="#"><img src="~/images/logodashboard.png" width="100" style="padding: 5px" /></a>
+        <h3 style="color:#ffffff"> @if (TempData["UserName"] != null) { @TempData["UserName"] }</h3>
             <a class="btn btn-outline-dangerst"  asp-controller="Account" asp-action="Signout" style=" float: right; margin-right: 20px; color: #ffffff; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 16px;">Sign Out</a>
     </div>
 

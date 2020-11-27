@@ -22,6 +22,7 @@ namespace EList_Frontend.Controllers
         public static string token;
         public string apiKey;
         public static int userID;
+        public static string userName;
 
         public ListController(IConfiguration config)
         {
@@ -35,6 +36,7 @@ namespace EList_Frontend.Controllers
         public async Task<IActionResult> Index()
         {
             userID = (int)HttpContext.Session.GetInt32("UserId");
+            userName = HttpContext.Session.GetString("UserName");
             token = HttpContext.Session.GetString("Token");
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
@@ -68,6 +70,7 @@ namespace EList_Frontend.Controllers
 
                 if (listsOfUser != null)
                 {
+                    TempData["UserName"] = userName;
                     listItemModel.Lists = listsOfUser;
                     return View(listItemModel);
                 }
