@@ -31,6 +31,7 @@ namespace EList_Frontend.Controllers
         }
 
         // GET: ListController
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             userID = (int)HttpContext.Session.GetInt32("UserId");
@@ -73,34 +74,40 @@ namespace EList_Frontend.Controllers
             }
             return View();
         }
+    
         public void GetListColors()
         {
-            foreach (List l in listsOfUser)
+            if(listsOfUser != null)
             {
-                if (l.ListColor == ListColors.BG_DANGER)
+                foreach (List l in listsOfUser)
                 {
-                    l.color = "bg-danger";
-                } else if (l.ListColor == ListColors.BG_INFO)
-                {
-                    l.color = "bg-info";
-                }
-                else if (l.ListColor == ListColors.BG_PRIMARY)
-                {
-                    l.color = "bg-primary";
-                }
-                else if (l.ListColor == ListColors.BG_SECONDARY)
-                {
-                    l.color = "bg-secondary";
-                }
-                else if (l.ListColor == ListColors.BG_SUCCESS)
-                {
-                    l.color = "bg-success";
-                }
-                else
-                {
-                    l.color = "bg-warning";
+                    if (l.ListColor == ListColors.BG_DANGER)
+                    {
+                        l.color = "bg-danger";
+                    }
+                    else if (l.ListColor == ListColors.BG_INFO)
+                    {
+                        l.color = "bg-info";
+                    }
+                    else if (l.ListColor == ListColors.BG_PRIMARY)
+                    {
+                        l.color = "bg-primary";
+                    }
+                    else if (l.ListColor == ListColors.BG_SECONDARY)
+                    {
+                        l.color = "bg-secondary";
+                    }
+                    else if (l.ListColor == ListColors.BG_SUCCESS)
+                    {
+                        l.color = "bg-success";
+                    }
+                    else
+                    {
+                        l.color = "bg-warning";
+                    }
                 }
             }
+           
         }
  
 
@@ -109,6 +116,7 @@ namespace EList_Frontend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateList(List list)
         {
+            userID = (int)HttpContext.Session.GetInt32("UserId");
             try
             {
                 if (ModelState.IsValid)
@@ -138,11 +146,11 @@ namespace EList_Frontend.Controllers
                         TempData["error"] = "List cannot be created.";
                     }
                 }
-                return View();
+                return Redirect("/List/Index");
             }
             catch
             {
-                return View();
+                return Redirect("/List/Index");
             }
         }
 
@@ -190,11 +198,11 @@ namespace EList_Frontend.Controllers
                         TempData["error"] = "List cannot be edited.";
                     }
                 }
-                return View();
+                return Redirect("/List/Index");
             }
             catch
             {
-                return View();
+                return Redirect("/List/Index");
             }
         }
 
@@ -223,11 +231,43 @@ namespace EList_Frontend.Controllers
                         TempData["error"] = "List cannot be deleted.";
                     }
                 }
-                return View();
+                return Redirect("/List/Index");
             }
             catch
             {
-                return View();
+                return Redirect("/List/Index");
+            }
+        }
+        // POST: ListController/SearchList/math
+        [HttpPost]
+        public async Task<ActionResult> SearchList(ListItemModel listItemModel)
+        {
+            token = HttpContext.Session.GetString("Token");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    HttpClient client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    string url = baseUrl + "list/" + listItemModel.List.ListName + apiKey;
+                    var response = await client.PostAsync(url,null);
+                    var userResponse = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        listsOfUser = JsonConvert.DeserializeObject<List<List>>(userResponse);
+                        TempData["message"] = "List found successfully!";
+                        return RedirectToAction("/List/Index", listsOfUser);
+                    }
+                    else
+                    {
+                        TempData["error"] = "Can't find the list.";
+                    }
+                }
+                return Redirect("/List/Index");
+            }
+            catch
+            {
+                return Redirect("/List/Index");
             }
         }
         public ActionResult Popup()

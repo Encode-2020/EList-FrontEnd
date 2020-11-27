@@ -45,14 +45,12 @@ html {
         background: #555;
         cursor: pointer;
     }
-
 .bell {
     border: none;
     float: right;
     margin-right: 5px;
     background: none;
 }
-
 .color-div {
     width: 100px;
     height: auto;
