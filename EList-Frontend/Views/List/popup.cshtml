@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Font Awesome Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/lib/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .checked {
+            color: orange;
+        }
+    </style>
+</head>
+
+<body style="background-color: #908383; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">
+    <div class="card text-center" style="width: 18rem; margin:10px auto auto auto">
+        <div class="card-body">
+            <h5 class="card-title">Reminder!</h5>
+            <p id="uiTitle" class="card-text">blank</p>
+            <button id="okBtn" class="btn btn-primary bg-danger">OK</button>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("uiTitle").innerHTML = urlParams.get('title');
+        document.getElementById("okBtn").addEventListener("click", closePopup, true);
+        function closePopup() {
+            window.close('', '_parent', '');
+        }
+    </script>
+
+</body>
+
+</html>

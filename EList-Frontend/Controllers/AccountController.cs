@@ -127,5 +127,12 @@ namespace EList_Frontend.Controllers
             return View();
         }
 
+        public IActionResult Signout()
+        {
+            HttpContext.Session.Remove("Token");
+            HttpContext.Session.Remove("UserId");
+            return RedirectToAction("Login");
+        }
+
     }
 }
