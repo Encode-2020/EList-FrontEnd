@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EList_Frontend.Controllers
 {
@@ -19,6 +20,8 @@ namespace EList_Frontend.Controllers
         private IConfiguration configuration;
         public string baseUrl;
         public List<List> listsOfUser;
+        public List<Item> sortedItems;
+        public List<List> sortedList;
         public static string token;
         public string apiKey;
         public static int userID;
@@ -40,38 +43,74 @@ namespace EList_Frontend.Controllers
             token = HttpContext.Session.GetString("Token");
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-            string url = baseUrl + "list/ByUserId/"+userID + apiKey;
+            //string url = baseUrl + "list/ByUserId/"+userID + apiKey;
+            string url = baseUrl + "list"+ apiKey;
             var response = await client.GetAsync(url);
             var userResponse = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
                 listsOfUser = JsonConvert.DeserializeObject<List<List>>(userResponse);
+                sortedList = new List<List>();
+                sortedItems = new List<Item>();
                 ListItemModel listItemModel = new ListItemModel();
                 listItemModel.Items = new List<Item>();
                 listItemModel.CompletedItems = new List<Item>();
                
                 GetListColors();
 
-                foreach (List slist in listsOfUser)
+                foreach (List list in listsOfUser)
                 {
-                    foreach(Item i in slist.Items)
+                    if(list.UserId == userID)
                     {
-                        if (i.IsCompleted)
-                        {
-                            listItemModel.CompletedItems.Add(i);
-
-                        } else
-                        {
-                            listItemModel.Items.Add(i);
-                        }
+                        sortedList.Add(list);
                     }
+                   
                 }
+                for(int i = 0; i< sortedList.Count; i++)
+                {
+                    for(int j= i; j < sortedList[i].Items.Count; j++)
+                    {
+                        if(sortedList[i].ListId == sortedList[i].Items[j].ListId  && sortedList[i].Items[j].IsCompleted)
+                        {
+                            listItemModel.CompletedItems.Add(sortedList[i].Items[j]);
+                        }
+                        else
+                        {
+                            listItemModel.Items.Add(sortedList[i].Items[j]);
+                        }
+                       
+                    }
+
+                }
+                //foreach (List l in sortedList)
+                //{
+                //    foreach(Item i in l.Items)
+                //    {
+                //        if (l.ListId == i.ListId)
+                //        {
+                //            sortedItems.Add(i);
+                //        }
+                //    }
+                //}
+
+                //foreach (Item i in sortedItems)
+                //{
+                //        if (i.IsCompleted)
+                //        {
+                //            listItemModel.CompletedItems.Add(i);
+
+                //        }
+                //        else
+                //        {
+                //            listItemModel.Items.Add(i);
+                //        }
+                //}
 
 
                 if (listsOfUser != null)
                 {
                     TempData["UserName"] = userName;
-                    listItemModel.Lists = listsOfUser;
+                    listItemModel.Lists = sortedList;
                     return View(listItemModel);
                 }
             }
