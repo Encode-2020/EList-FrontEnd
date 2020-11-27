@@ -139,11 +139,11 @@ namespace EList_Frontend.Controllers
             return View();
         }
 
-        public IActionResult Signout()
+        public IActionResult Signout(string returnUrl = "/")
         {
             HttpContext.Session.Remove("Token");
             HttpContext.Session.Remove("UserId");
-            return RedirectToAction("/");
+            return Redirect(returnUrl);
         }
 
     }
