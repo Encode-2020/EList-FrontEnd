@@ -25,6 +25,6 @@ namespace EList_Frontend.Models
         public string color { get; set; }
         public DateTime LastEdited { get; set; }
         public DateTime ReminderDateTime { get; set; }
-        public ICollection<Item> Items { get; set; }
+        public List<Item> Items { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EList_Frontend.Controllers
 {
@@ -19,9 +20,13 @@ namespace EList_Frontend.Controllers
         private IConfiguration configuration;
         public string baseUrl;
         public List<List> listsOfUser;
+        public List<List<Item>> sortedItems;
+        public List<List> sortedList;
+        public List<Item> separateItems;
         public static string token;
         public string apiKey;
         public static int userID;
+        public static string userName;
 
         public ListController(IConfiguration config)
         {
@@ -35,46 +40,52 @@ namespace EList_Frontend.Controllers
         public async Task<IActionResult> Index()
         {
             userID = (int)HttpContext.Session.GetInt32("UserId");
+            userName = HttpContext.Session.GetString("UserName");
             token = HttpContext.Session.GetString("Token");
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
             string url = baseUrl + "list/ByUserId/"+userID + apiKey;
+            //string url = baseUrl + "list"+ apiKey;
             var response = await client.GetAsync(url);
             var userResponse = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
                 listsOfUser = JsonConvert.DeserializeObject<List<List>>(userResponse);
+                sortedList = new List<List>();
+                sortedItems = new List<List<Item>>();
+                separateItems = new List<Item>();
                 ListItemModel listItemModel = new ListItemModel();
                 listItemModel.Items = new List<Item>();
                 listItemModel.CompletedItems = new List<Item>();
                
                 GetListColors();
 
-                foreach (List slist in listsOfUser)
+                foreach (List list in listsOfUser)
                 {
-                    foreach(Item i in slist.Items)
+                    foreach (Item i in list.Items)
                     {
-                        if (i.IsCompleted)
+                        if (list.ListId == i.ListId)
                         {
-                            listItemModel.CompletedItems.Add(i);
-
-                        } else
-                        {
-                            listItemModel.Items.Add(i);
+                            separateItems.Add(i);
                         }
                     }
                 }
+               
+
 
 
                 if (listsOfUser != null)
                 {
+                    TempData["UserName"] = userName;
                     listItemModel.Lists = listsOfUser;
+                   
                     return View(listItemModel);
                 }
             }
             return View();
         }
-    
+
+
         public void GetListColors()
         {
             if(listsOfUser != null)

@@ -30,6 +30,7 @@
 <body style="background-color: #908383">
     <div class="d-flex flex-md-row align-items-center justify-content-between p-3 px-md-4 mb-3 border-bottom box-shadow nopadding" style="background-color: #D9534F">
         <a class="navbar-brand" href="#"><img src="~/images/logodashboard.png" width="100" style="padding: 5px" /></a>
+        <h3 style="color:#ffffff"> @if (TempData["UserName"] != null) { @TempData["UserName"] }</h3>
             <a class="btn btn-outline-dangerst"  asp-controller="Account" asp-action="Signout" style=" float: right; margin-right: 20px; color: #ffffff; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: 16px;">Sign Out</a>
     </div>
 
@@ -207,133 +208,128 @@
                                     <div class="modal-body">
                                         <ul class="list-group list-group-flush">
 
-                                            @foreach (var i in Model.Items)
+                                            @foreach (var i in m.Items)
                                             {
+                                                @if (!i.IsCompleted)
+                                                {
+                                                    <li class="list-group-item" >
+                                                        <!-- Default checked -->
+                                                        <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
+                                                            <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
+                                                            <input type="hidden" asp-for="Item.IsCompleted" value="@i.IsCompleted" />
+                                                            <button type="submit" style="background:none;border:none"><img src=@i.Url style="border:none;background:none; height:16px;width:16px" /></button>
 
-                                                <li class="list-group-item" style="">
-                                                    <!-- Default checked -->
-                                                    <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
-                                                        <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
-                                                        <input type="hidden" asp-for="Item.IsCompleted" value="@i.IsCompleted" />
-                                                        <button type="submit" style="background:none;border:none"><img src=@i.Url style="border:none;background:none; height:16px;width:16px" /></button>
+                                                        </form>
+                                                        <label for="@i.ItemId">
+                                                            @i.Description
+                                                        </label>
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn close" data-toggle="modal" aria-label="Close" data-target="#deleteItem@(i.ItemId)">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="deleteItem@(i.ItemId)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <form asp-action="DeleteItem" asp-controller="Item" method="post" asp-route-id="@m.ListId" asp-route-itemId="@i.ItemId">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            Are you sure you want to delete?
+                                                                        </div>
 
-                                                    </form>
-                                                    <label for="@i.ItemId">
-                                                        @i.Description
-                                                    </label>
-                                                    <!-- Button trigger modal -->
-                                                    <button type="button" class="btn close" data-toggle="modal" aria-label="Close" data-target="#deleteItem@(i.ItemId)">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    <!-- Modal -->
-                                                    <div class="modal fade" id="deleteItem@(i.ItemId)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog" role="document">
-                                                            <form asp-action="DeleteItem" asp-controller="Item" method="post" asp-route-id="@m.ListId" asp-route-itemId="@i.ItemId">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
-                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                                                            <button type="submit" class="btn btn-danger">Delete</button>
+
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="modal-body">
-                                                                        Are you sure you want to delete?
-                                                                    </div>
-
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                                                                        <button type="submit" class="btn btn-danger">Delete</button>
-
-                                                                    </div>
-                                                                </div>
-                                                            </form>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <!-- Button trigger modal -->
-                                                    <button class="btn btn-item-edit" type="button" data-toggle="collapse" data-target="#editCollapse@(i.ItemId)" aria-expanded="false" aria-controls="editCollapse" style=" margin-left: 10px; margin-right: 10px; border: none; background: none; float: right; line-height: 1;">
-                                                        <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
-                                                    </button>
-                                                    <div class="collapse" id="editCollapse@(i.ItemId)">
-                                                        <div>
-                                                            <form asp-action="EditItem" asp-controller="Item" asp-route-id="@m.ListId" method="post" class="col-12">
-                                                                <div class="input-group mb-3">
+                                                        <!-- Button trigger modal -->
+                                                        <button class="btn btn-item-edit" type="button" data-toggle="collapse" data-target="#editCollapse@(i.ItemId)" aria-expanded="false" aria-controls="editCollapse" style=" margin-left: 10px; margin-right: 10px; border: none; background: none; float: right; line-height: 1;">
+                                                            <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
+                                                        </button>
+                                                        <div class="collapse" id="editCollapse@(i.ItemId)">
+                                                            <div>
+                                                                <form asp-action="EditItem" asp-controller="Item" asp-route-id="@m.ListId" method="post" class="col-12">
+                                                                    <div class="input-group mb-3">
+                                                                        <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
+                                                                        <input class="col-8 form-control" asp-for="Item.Description" value="@i.Description" aria-label="Description" aria-describedby="buttonEdit" style=" padding: 15px; height: 40px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"> <!-- style=" padding: 15px; height: 40px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"-->
+                                                                        <div class="input-group-append">
+                                                                            <button class="btn btn-outline-danger" type="submit" id="buttonEdit">Save</button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </form>
+                                                            </div>
+
+                                                        </div>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <a data-toggle="collapse" href="#collapseCompleted" role="button" aria-expanded="false" aria-controls="collapseCompleted">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="addItemTitle">Completed</h5>
+                                                        </div>
+                                                    </a>
+
+                                                    <div class="collapse" id="collapseCompleted">
+                                                            <li class="list-group-item">
+                                                                <!-- Default checked -->
+                                                                <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
                                                                     <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
-                                                                    <input class="col-8 form-control" asp-for="Item.Description" value="@i.Description" aria-label="Description" aria-describedby="buttonEdit" style=" padding: 15px; height: 40px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"> <!-- style=" padding: 15px; height: 40px; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"-->
-                                                                    <div class="input-group-append">
-                                                                        <button class="btn btn-outline-danger" type="submit" id="buttonEdit">Save</button>
+                                                                    <input type="hidden" asp-for="Item.IsCompleted" value="@i.IsCompleted" />
+                                                                    <button type="submit" style="background:none;border:none"><img src=@i.Url style="border:none;background:none; height:16px;width:16px" /></button>
+
+                                                                </form>
+                                                                <label for="@i.ItemId">
+                                                                    @i.Description
+                                                                </label>
+                                                                <!-- Button trigger modal -->
+                                                                <button type="button" class="btn close" data-toggle="modal" aria-label="Close" data-target="#deleteItem@(i.ItemId)">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                <!-- Modal -->
+                                                                <div class="modal fade" id="deleteItem@(i.ItemId)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog" role="document">
+                                                                        <form asp-action="DeleteItem" asp-controller="Item" method="post" asp-route-id="@m.ListId" asp-route-itemId="@i.ItemId">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    Are you sure you want to delete?
+                                                                                </div>
+
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                                                                    <button type="submit" class="btn btn-danger">Delete</button>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
+                                                            </li>
 
-                                                            </form>
                                                         </div>
+                                                }
 
-                                                    </div>
-                                                </li>
                                             }
                                         </ul>
-
-
-                                        <a data-toggle="collapse" href="#collapseCompleted" role="button" aria-expanded="false" aria-controls="collapseCompleted">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="addItemTitle">Completed</h5>
-                                            </div>
-                                        </a>
-
-                                        <div class="collapse" id="collapseCompleted">
-                                            <div class="card card-body">
-                                                <ul class="list-group list-group-flush">
-                                                    @foreach (var ci in Model.CompletedItems)
-                                                    {
-                                                        <li class="list-group-item">
-                                                            <!-- Default checked -->
-                                                            <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
-                                                                <input type="hidden" asp-for="Item.ItemId" value="@ci.ItemId" />
-                                                                <input type="hidden" asp-for="Item.IsCompleted" value="@ci.IsCompleted" />
-                                                                <button type="submit" style="background:none;border:none"><img src=@ci.Url style="border:none;background:none; height:16px;width:16px" /></button>
-
-                                                            </form>
-                                                            <label for="@ci.ItemId">
-                                                                @ci.Description
-                                                            </label>
-                                                            <!-- Button trigger modal -->
-                                                            <button type="button" class="btn close" data-toggle="modal" aria-label="Close" data-target="#deleteItem@(ci.ItemId)">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                            <!-- Modal -->
-                                                            <div class="modal fade" id="deleteItem@(ci.ItemId)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <form asp-action="DeleteItem" asp-controller="Item" method="post" asp-route-id="@m.ListId" asp-route-itemId="@ci.ItemId">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title" id="exampleModalLabel">Delete Item</h5>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                Are you sure you want to delete?
-                                                                            </div>
-
-                                                                            <div class="modal-footer">
-                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                                                                                <button type="submit" class="btn btn-danger">Delete</button>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            </div>
-                                        </div>
-
-
-
 
                                     </div>
 

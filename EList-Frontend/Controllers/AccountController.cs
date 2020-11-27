@@ -60,6 +60,7 @@ namespace EList_Frontend.Controllers
                     {
                         loggedUser = JsonConvert.DeserializeObject<User>(userResponse);
                         HttpContext.Session.SetInt32("UserId", loggedUser.UserID);
+                        HttpContext.Session.SetString("UserName", loggedUser.Username);
                         return Redirect("/List/Index");
                     }
                     else
@@ -124,7 +125,7 @@ namespace EList_Frontend.Controllers
                     {
                     createdUser = JsonConvert.DeserializeObject<User>(userResponse);
                     HttpContext.Session.SetInt32("UserId", createdUser.UserID);
-                    TempData["SignupSuccess"] = "User created successfull!";
+                    TempData["message"] = "User created successfull!";
                     return Redirect("/Account/Signin");
                     } else if(response.StatusCode.ToString() == "409")
                         {
