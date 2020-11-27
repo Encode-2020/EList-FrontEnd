@@ -26,8 +26,8 @@
 <body style="background-color: #908383">
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow nopadding" style="background-color: #D9534F">
         <a class="navbar-brand" href="#"><img src="~/images/logodashboard.png" width="100" style="padding: 5px" /></a>
-        <nav class="my-2 my-md-0 mr-md-3 float-right">
-            <a class="p-2 text-dark float-right" asp-controller="Account" asp-action="Signout">Sign Out</a>
+        <nav class="my-2 my-md-0 mr-md-3 float-right" style="float:right">
+            <a class="btn btn-outline-dangers float-right" asp-controller="Account" asp-action="Signout">Sign Out</a>
         </nav>
     </div>
 
@@ -53,7 +53,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header bg-danger">
-                                            <h5 class="modal-title" id="addModalLabel">Create List</h5>
+                                            <h5 class="modal-title" id="addModalLabel" style="color:#ffffff">Create List</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -129,7 +129,7 @@
                                     <div class="modal fade" id="editList@(m.ListId)" tabindex="-1" aria-labelledby="editListLabel4" aria-hidden="true">
 
                                         <div class="modal-dialog">
-                                            <form asp-action="EditList" asp-controller="List" method="post" asp-route-id="@m.ListId">
+                                            <form asp-action="EditList" asp-controller="List" method="post" >
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="editListLabel">Edit List</h5>
@@ -142,6 +142,7 @@
                                                         <input type=hidden asp-for="List.ReminderDateTime" value="@m.ReminderDateTime" />
                                                         <input type=hidden asp-for="List.LastEdited" value="@m.LastEdited" />
                                                         <input type=hidden asp-for="List.ListId" value="@m.ListId" />
+                                                        <input type=hidden asp-for="List.UserId" value="@m.UserId" />
                                                         <div class="form-group">
                                                             <input asp-for="List.ListName" class="form-control" value="@m.ListName" />
 
@@ -169,7 +170,7 @@
 
 
 
-                                <button type="button" class="btn" data-toggle="modal" data-target="#addItem@(m.ListId)" style="display:inline; width: 100%;height: 80%">
+                                <button type="button" class="btn" data-toggle="modal" data-target="#addItem@(m.ListId)" style="display:inline; width: 100%;height: 77%">
 
                                     <div class="@m.ListColor">
                                         @if (m.ListName == null)
@@ -189,7 +190,7 @@
                         <div class=" modal fade" id="addItem@(m.ListId)" tabindex="-1" role="dialog" aria-labelledby="addItemTitle" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document" style="width:1200px">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="display:flex;flex-direction:row;justify-content:space-between; width: auto; height: 60px; background-color: #C034B7; text-align:center">
+                                    <div class="modal-header @m.color" style="display:flex;flex-direction:row;justify-content:space-between; width: auto; height: 60px; text-align:center">
                                         <button style="border:none; background:none; "><img src="~/images/color.png" height="32" width="32" /></button>
 
                                         <h3 class="modal-title" id="addItemTitle" style="color: #FFFFFF;margin-left:auto;margin-right:auto;">@m.ListName</h3>
@@ -204,7 +205,7 @@
                                             @foreach (var i in Model.Items)
                                             {
 
-                                                <li class="list-group-item">
+                                                <li class="list-group-item" style="">
                                                     <!-- Default checked -->
                                                     <form asp-action="PatchIsCompleted" asp-controller="Item" asp-route-id="@m.ListId">
                                                         <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
@@ -250,7 +251,7 @@
                                                         <span aria-hidden="true"><img src="~/images/edit.png" height="16" width="16" /></span>
                                                     </button>
                                                     <div class="collapse" id="editCollapse@(i.ItemId)">
-                                                        <div class="col-12">
+                                                        <div>
                                                             <form asp-action="EditItem" asp-controller="Item" asp-route-id="@m.ListId" method="post" class="col-12">
                                                                 <div class="input-group mb-3">
                                                                     <input type="hidden" asp-for="Item.ItemId" value="@i.ItemId" />
@@ -268,11 +269,13 @@
                                             }
                                         </ul>
 
-                                        <a data-toggle="collapse" href="#collapseCompleted" role="button" aria-expanded="false" aria-controls="collapseCompleted">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="addItemTitle">Completed</h5>
-                                            </div>
-                                        </a>
+                                       
+                                    <a data-toggle="collapse" href="#collapseCompleted" role="button" aria-expanded="false" aria-controls="collapseCompleted">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addItemTitle">Completed</h5>
+                                        </div>
+                                    </a>
+                                            
                                         <div class="collapse" id="collapseCompleted">
                                             <div class="card card-body">
                                                 <ul class="list-group list-group-flush">
@@ -323,6 +326,8 @@
                                                 </ul>
                                             </div>
                                         </div>
+
+
 
 
                                     </div>

@@ -17,14 +17,16 @@ namespace EList_Frontend.Controllers
     public class AccountController : Controller
     {
         private IConfiguration? configuration;
-        string? baseUrl;
-        public string? token;
+        public string baseUrl;
+        public string apiKey;
+        public static string? token;
         User loggedUser;
         User createdUser;
         public AccountController(IConfiguration config)
         {
             configuration = config;
             baseUrl = configuration.GetSection("ApiBaseUrl").GetSection("Baseurl").Value;
+            apiKey= configuration.GetSection("ApiBaseUrl").GetSection("apikey").Value;
             loggedUser = new User();
             createdUser = new User();
         }
@@ -45,33 +47,36 @@ namespace EList_Frontend.Controllers
         {
             User fetchedUser = new User();
             fetchedUser =await GetUser(login);
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
-            string url = baseUrl + "api/Users/"+fetchedUser.UserID;
-            if (ModelState.IsValid)
+            if(fetchedUser != null)
             {
-                var response = await client.GetAsync(url);
-                var userResponse = await response.Content.ReadAsStringAsync();
-                // LoginResponse responseObj = JsonConvert.DeserializeObject<LoginResponse>(userResponse);
-                if (response.IsSuccessStatusCode)
+                HttpClient client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                string url = baseUrl + "users/" + fetchedUser.UserID + apiKey;
+                if (ModelState.IsValid)
                 {
-                    loggedUser = JsonConvert.DeserializeObject<User>(userResponse);
-                    HttpContext.Session.SetInt32("UserId", loggedUser.UserID);
-                    return Redirect("/List/Index");
-                }
-                else
-                {
-                    TempData["FailedToLogin"] = "Information is incorrect.";
-                }
+                    var response = await client.GetAsync(url);
+                    var userResponse = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        loggedUser = JsonConvert.DeserializeObject<User>(userResponse);
+                        HttpContext.Session.SetInt32("UserId", loggedUser.UserID);
+                        return Redirect("/List/Index");
+                    }
+                    else
+                    {
+                        TempData["error"] = "Information is incorrect.";
+                    }
 
+                }
             }
+            TempData["error"] = "Information is incorrect.";
             return View();
         }
         public async Task<User> GetUser(Login login)
         {
             RootResponse responseObj = new RootResponse();
              HttpClient client = new HttpClient();
-                string url = baseUrl + "api/login/";
+                string url = baseUrl + "login"+apiKey;
                 //
                 var jsonObj = JsonConvert.SerializeObject(new
                 {
@@ -82,10 +87,13 @@ namespace EList_Frontend.Controllers
                 var response = await client.PostAsync(url, content);
                 var userResponse = await response.Content.ReadAsStringAsync();
                 responseObj = JsonConvert.DeserializeObject<RootResponse>(userResponse);
-
+            if (response.IsSuccessStatusCode)
+            {
                 HttpContext.Session.SetString("Token", responseObj.LoginResponse.Token);
                 token = responseObj.LoginResponse.Token;
-            return responseObj.LoginResponse.User;
+                return responseObj.LoginResponse.User;
+            } 
+            return null;  
         }
 
         [AllowAnonymous]
@@ -101,7 +109,8 @@ namespace EList_Frontend.Controllers
             if (ModelState.IsValid)
             {
                 HttpClient client = new HttpClient();
-                string url = baseUrl + "api/Users";
+                string url = baseUrl + "Users" + apiKey;
+              
                 var jsonObj = JsonConvert.SerializeObject(new
                 {
                     username = user.Username,
@@ -117,10 +126,13 @@ namespace EList_Frontend.Controllers
                     HttpContext.Session.SetInt32("UserId", createdUser.UserID);
                     TempData["SignupSuccess"] = "User created successfull!";
                     return Redirect("/Account/Signin");
-                    }
+                    } else if(response.StatusCode.ToString() == "409")
+                        {
+                        TempData["error"] = "User already exist.";
+                        }
                     else
                     {
-                        TempData["FailedToLogin"] = "Information is incorrect.";
+                        TempData["error"] = "Failed to create user.";
                     }
             }
            
@@ -131,7 +143,7 @@ namespace EList_Frontend.Controllers
         {
             HttpContext.Session.Remove("Token");
             HttpContext.Session.Remove("UserId");
-            return RedirectToAction("Login");
+            return RedirectToAction("/");
         }
 
     }
